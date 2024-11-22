@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviour
     public float acceleration = 0.1f;
     public float maxSpeed = 5f;
     public Vector2 playerInput;
+    public FacingDirection direction = FacingDirection.right;
 
     public enum FacingDirection
     {
@@ -43,10 +44,12 @@ public class PlayerController : MonoBehaviour
     private void MovementUpdate(Vector2 playerInput)
     {
         if(playerInput.x > 0){
+            direction = FacingDirection.right;
             if(speed < 0) speed = 0;
             speed = Mathf.Min(speed + acceleration, maxSpeed);
         }
         else if(playerInput.x < 0){
+            direction = FacingDirection.left;
             if(speed > 0) speed = 0;
             speed = Mathf.Max(speed - acceleration, -maxSpeed);
         }
@@ -60,15 +63,15 @@ public class PlayerController : MonoBehaviour
 
     public bool IsWalking()
     {
-        return false;
+        return speed != 0 ? true : false;
     }
     public bool IsGrounded()
     {
-        return true;
+        return false;
     }
 
     public FacingDirection GetFacingDirection()
     {
-        return FacingDirection.left;
+        return direction;
     }
 }
