@@ -10,6 +10,7 @@ public class PlayerController : MonoBehaviour
     public float maxSpeed = 5f;
     public Vector2 playerInput;
     public FacingDirection direction = FacingDirection.right;
+    public groundDetector groundHitBox;
 
     public enum FacingDirection
     {
@@ -67,7 +68,7 @@ public class PlayerController : MonoBehaviour
     }
     public bool IsGrounded()
     {
-        return false;
+        return groundHitBox.grounded;
     }
 
     public FacingDirection GetFacingDirection()
