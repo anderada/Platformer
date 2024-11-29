@@ -11,6 +11,7 @@ public class PlayerController : MonoBehaviour
     public Vector2 playerInput;
     public FacingDirection direction = FacingDirection.right;
     public groundDetector groundHitBox;
+    public groundDetector headHitBox;
     public float apexHeight;
     public float apexTime;
     float gravity;
@@ -41,7 +42,7 @@ public class PlayerController : MonoBehaviour
         else if(Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow)){
             playerInput.x  = 1;
         }
-        if(playerInput.y == 0 && (timeSinceGrounded < coyoteTime) && (Input.GetKeyDown(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))){
+        if(playerInput.y == 0 && (timeSinceGrounded < coyoteTime) && (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.Space))){
             playerInput.y = 1;
         }
 
@@ -83,6 +84,12 @@ public class PlayerController : MonoBehaviour
         else if(speed.y < 0){
             speed.y = 0;
         }
+
+        if(speed.y > 0 && headHitBox.grounded){
+            speed.y = 0;
+        }
+        
+        Debug.Log(headHitBox.grounded);
 
         //vertical movement
         if(playerInput.y == 1){
