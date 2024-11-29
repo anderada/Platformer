@@ -5,12 +5,18 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
 
-    public float speed = 0f;
+    public Vector2 speed;
     public float acceleration = 0.1f;
     public float maxSpeed = 5f;
     public Vector2 playerInput;
     public FacingDirection direction = FacingDirection.right;
     public groundDetector groundHitBox;
+    public float apexHeight;
+    public float apexTime;
+    float gravity;
+    public float terminalVeloicty;
+    public float coyoteTime;
+    float timeSinceGrounded;
 
     public enum FacingDirection
     {
@@ -20,22 +26,31 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        speed = new Vector2(0,0);
     }
 
     // Update is called once per frame
     void Update()
     {
+        playerInput.x = 0;
         //The input from the player needs to be determined and then passed in the to the MovementUpdate which should
         //manage the actual movement of the character.
-        float xInput = 0;
         if(Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow)){
-            xInput = -1;
+            playerInput.x = -1;
         }
         else if(Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow)){
-            xInput = 1;
+            playerInput.x  = 1;
         }
-        playerInput = new Vector2(xInput, Input.GetAxis("Vertical"));
+        if(playerInput.y == 0 && (timeSinceGrounded < coyoteTime) && (Input.GetKeyDown(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))){
+            playerInput.y = 1;
+        }
+
+        if(IsGrounded()){
+            timeSinceGrounded = 0;
+        }
+        else{
+            timeSinceGrounded += Time.deltaTime;
+        }
     }
 
     void FixedUpdate(){
@@ -44,27 +59,45 @@ public class PlayerController : MonoBehaviour
 
     private void MovementUpdate(Vector2 playerInput)
     {
+
+        //horizontal movement
         if(playerInput.x > 0){
             direction = FacingDirection.right;
-            if(speed < 0) speed = 0;
-            speed = Mathf.Min(speed + acceleration, maxSpeed);
+            if(speed.x < 0) speed.x = 0;
+            speed.x = Mathf.Min(speed.x + acceleration, maxSpeed);
         }
         else if(playerInput.x < 0){
             direction = FacingDirection.left;
-            if(speed > 0) speed = 0;
-            speed = Mathf.Max(speed - acceleration, -maxSpeed);
+            if(speed.x > 0) speed.x = 0;
+            speed.x = Mathf.Max(speed.x - acceleration, -maxSpeed);
         }
         else{
-            speed = 0;
+            speed.x = 0;
         }
 
+        //apply gravity
+        if(!IsGrounded()){
+            gravity = -(2f * apexHeight / apexTime) / (apexTime * 2f * 24f);
+            speed.y = Mathf.Max(speed.y + gravity, terminalVeloicty);
+        }
+        else if(speed.y < 0){
+            speed.y = 0;
+        }
+
+        //vertical movement
+        if(playerInput.y == 1){
+            this.playerInput.y = 0;
+            speed.y = 2f * apexHeight / apexTime;
+        }
+
+        //update velocity
         Rigidbody2D rigidBody = GetComponent<Rigidbody2D>();
-        rigidBody.velocity = new Vector2(speed, rigidBody.velocity.y);
+        rigidBody.velocity = new Vector2(speed.x, speed.y);
     }
 
     public bool IsWalking()
     {
-        return speed != 0 ? true : false;
+        return speed.x != 0;
     }
     public bool IsGrounded()
     {
