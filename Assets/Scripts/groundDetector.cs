@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class groundDetector : MonoBehaviour
 {
-    public bool grounded = true;
+    public bool activated = true;
 
     void OnTriggerEnter2D(){
-        grounded = true;
+        activated = true;
     }
 
     void OnTriggerExit2D(){
-        grounded = false;
+        activated = false;
     }
 }
