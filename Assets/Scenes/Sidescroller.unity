@@ -1877,6 +1877,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: {x: 0, y: 0}
   acceleration: 0.5
+  decceleration: 30
   maxSpeed: 7
   playerInput: {x: 0, y: 0}
   direction: 1

@@ -7,6 +7,7 @@ public class PlayerController : MonoBehaviour
 
     public Vector2 speed;                                       //player speed
     public float acceleration = 0.1f;                           //horizontal speed increase per FixedUpdate() call
+    public float decceleration = 0f;
     public float maxSpeed = 5f;                                 //maximum horizonal speed
     public Vector2 playerInput;                                 //input vector
     public FacingDirection direction = FacingDirection.right;   //horizontal direction of movement
@@ -133,9 +134,10 @@ public class PlayerController : MonoBehaviour
                 //add left speed
                 speed.x = Mathf.Max(speed.x - acceleration, -maxSpeed);
             }
-            //if no input, stop the player instantly
+            //if no input, stop the player
             else{
-                speed.x = 0;
+                if(speed.x > 0) speed.x = Mathf.Max(speed.x - decceleration, 0);
+                if(speed.x < 0) speed.x = Mathf.Min(speed.x + decceleration, 0);
             }
         }
 
